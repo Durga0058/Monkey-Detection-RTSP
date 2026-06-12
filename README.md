@@ -14,3 +14,7 @@ As documented in the initial project specifications, this pipeline tackles the p
 ## 📋 System Prerequisites
 
 Before running or reproducing this project, ensure your environment meets the dependencies.
+cd models
+pip install -r requirements.txt
+cd ..
+
