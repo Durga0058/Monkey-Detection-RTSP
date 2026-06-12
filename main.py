@@ -30,12 +30,12 @@ def run_monkey_detection():
         print(f"Error: Video source '{source}' open nahi ho paa raha hai.")
         return
 
-    print("Monkey Detection Service Start Ho Chuki Hai... Press 'q' to exit.")
+    print("Monkey Detection Service Start")
 
     while True:
         ret, frame = cap.read()
         if not ret:
-            print("Video stream khatam ho gayi ya frame nahi mil raha.")
+            print("Video stream")
             break
             
         # 5. Run Object Detection on Current Frame
@@ -53,7 +53,7 @@ def run_monkey_detection():
                 label = model.names[cls]
                 
                 # target monkeys 
-                if label in ["monkey", "animal", "person"]: 
+                if label in ["monkey", "monkey", "monkey"]: 
                     
                     # Green Color Bounding Box
                     cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
