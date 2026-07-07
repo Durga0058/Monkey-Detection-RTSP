@@ -1,0 +1,6 @@
+path: ../data        # Dataset root directory path
+train: images/train  # Training images subfolder (relative to path)
+val: images/val      # Validation images subfolder (relative to path)
+
+nc: 1                # Number of classes
+names: ['monkey']    # Array of class names
