@@ -1,4 +1,4 @@
-## 🛠 Prerequisites & Environment Setup
+## Prerequisites & Environment Setup
 
 To replicate this project exactly and avoid dependency conflicts, ensure your system uses the following core versions:
 
