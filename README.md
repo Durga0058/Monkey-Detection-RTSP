@@ -8,9 +8,6 @@ To replicate this project exactly and avoid dependency conflicts, ensure your sy
 ### Installation Setup
 
 ```bash
-# Clone the repository
-git clone [https://github.com/Durga0058/Monkey-Detection-RTSP.git](https://github.com/Durga0058/Monkey-Detection-RTSP.git)
-cd Monkey-Detection-RTSP
 
 # Install required dependencies
 pip install -r requirements.txt
