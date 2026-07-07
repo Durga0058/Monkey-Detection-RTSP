@@ -1,45 +1,60 @@
-# Monkey-Detection
+## 🛠 Prerequisites & Environment Setup
 
-## Dataset
-* Various video and image datasets are collected.
-* The focus is specifically on tracking monkey movements.
-* All collected data is systematically labeled.
+To replicate this project exactly and avoid dependency conflicts, ensure your system uses the following core versions:
 
-## Splitting the Data
-* The dataset is split into train and validation sets.
-* The division follows standard machine learning optimization ratios.
-* The split configuration is managed within the dataset directory.
+* **Python Version:** `3.10.x` 
+* **Pip Version:** `23.x.x` 
 
-## Cloning of YOLOv8 and installing requirements
-* The project repository is cloned locally.
-* Python virtual environment is set up.
-* All the requirements for YOLOv8 are installed using:
-  ```bash
-  pip install -r requirements.txt
-Data training and Validation
-Mark the given dataset config files as required.
+### Installation Setup
 
-The training of the model is done using pre-trained weights.
+```bash
+# Clone the repository
+git clone [https://github.com/Durga0058/Monkey-Detection-RTSP.git](https://github.com/Durga0058/Monkey-Detection-RTSP.git)
+cd Monkey-Detection-RTSP
 
-Training is executed via the command line interface:
+# Install required dependencies
+pip install -r requirements.txt
+Data Pipeline & Collection
+1. Data Collection Instructions
+Source: The dataset consists of monkey images and video frames collected from custom field recordings or public data sources.
+
+Format: All data must be annotated in standard YOLO format (where each .jpg image has a corresponding .txt file containing class indices and normalized bounding box coordinates).
+
+2. Preprocessing Instructions
+Before initiating training, prepare your raw dataset using the following workflow:
+
+Resizing: Standardize all dataset images to a uniform resolution of 640x640 pixels.
+
+Dataset Splitting: Divide the preprocessed images and labels into training and validation sets (Recommended distribution: 80% Train, 20% Val).
+
+Directory Hierarchy: Ensure files are structured correctly into images/ and labels/ subdirectories to prevent training script crashes.
+
+Dataset Configuration
+The training script requires a configuration file to reference the dataset paths and class variables.
+
+File Location: data/custom_dataset.yaml
+
+Structure Template: Ensure your YAML file follows this structural format:
+
+YAML
+path: ../data        # Dataset root directory path
+train: images/train  # Training images subfolder (relative to path)
+val: images/val      # Validation images subfolder (relative to path)
+
+nc: 1                # Number of classes
+names: ['monkey']    # Array of class names
+Training & Model Checkpoints
+Running the Training Script
+To trigger the custom training workflow using the defined environment and dataset setup, run the following terminal command:
 
 Bash
-* To start the model training phase, run this command in your terminal:
-  ```bash
-  yolo task=detect mode=train model=yolov8n.pt data=data/custom_dataset.yaml epochs=50 imgsz=640 batch=16 device=0
-Best validation weights are extracted upon successful run completion.
+python train.py --data data/custom_dataset.yaml --weights yolov8n.pt --epochs 100 --img 640
+How to Get the Best Model Checkpoint
+Once the training process finishes execution, the framework automatically evaluates performance metrics and exports the model weights.
 
-Inference
-Multiple inference video streams are uploaded to the local input directory.
+Directory Path: Checkpoints are stored automatically under: runs/detect/train/weights/
 
-Automated batch inference with the custom weights is executed by running:
+best.pt (Recommended): Use this specific checkpoint for production deployment, inference testing, or RTSP streaming. It represents the weights that achieved the highest precision/lowest loss on the validation split.
 
-Bash
+last.pt: This file represents the weights captured at the very last training epoch.
 
-* To execute automated batch inference on your raw videos, run this command in your terminal:
-  ```bash
-  python detect_multiple.py
-Display
-The detected monkeys are tracked with automated bounding boxes.
-
-The finalized output results are generated and displayed seamlessly.
