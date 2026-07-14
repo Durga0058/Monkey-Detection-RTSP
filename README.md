@@ -79,14 +79,12 @@ This is where your results live.
 
 Where to find the weights? Navigate to: runs/detect/train/weights/
 
-You will see two files:
+You will see files:
 
 1.  best.pt: USE THIS ONE. It is the version of the model that had the highest
     accuracy during the training process.
-2.  last.pt: This is simply the model at the very last epoch (100). It might not
-    be as accurate as the "best" version.
 
-💻 7. Running Inference
+7. Running Inference
 
 To test your "best" model on a local video file, run:
 
