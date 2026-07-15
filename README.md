@@ -11,7 +11,6 @@ Two config sources:
 
 - Python: `3.10.x`
 - Pip: `23.x.x`
-- OS: Windows, Linux, or macOS
 
 ```bash
 conda create -n monkeydet python=3.10
@@ -26,6 +25,7 @@ Clone the repo and install dependencies:
 git clone https://github.com/Durga0058/Monkey-Detection-RTSP.git
 cd Monkey-Detection-RTSP
 pip install -r requirements.txt
+python3 -m venv .venv
 ```
 
 ## Configuration
@@ -51,7 +51,7 @@ Before training, prepare the visual dataset:
 
 **A. Data Collection**
 - Gather at least 200–500 images of monkeys, with variety in species, lighting (day/night), and distance from camera.
-- Annotate using [CVAT](https://www.cvat.ai/) or [Roboflow](https://roboflow.com/), drawing boxes around each monkey.
+- Annotate using [Roboflow](https://roboflow.com/), drawing boxes around each monkey.
 - Export annotations in YOLO format (one `.txt` label file per `.jpg` image).
 
 **B. Preprocessing**
