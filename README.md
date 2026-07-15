@@ -1,118 +1,94 @@
-Monkey Detection RTSP
+# Monkey Detection RTSP
 
-This project is a comprehensive guide to building a custom object detection
-system. It uses YOLOv8 to identify monkeys in various environments, specifically
-designed to work with real-time RTSP camera streams.
+Real-time monkey detection system for live camera streams and offline video files. It wires a YOLOv8 object detection model into a video pipeline, supporting both RTSP camera feeds and local video files as input. The active entry point is `monkey_detection.py`, using `config.yaml` for source and model selection.
 
- 1. Environment Requirements
+Two config sources:
 
-To ensure the code runs without errors, you must use these specific versions:
+- **`config.yaml`** — runtime behavior (video source mode, RTSP URL / local video path, model weights path). See [Configuration](#configuration) below.
+- **`data/custom_dataset.yaml`** — dataset mapping used only during training (image/label paths, class names).
 
-  - Python: 3.10.x
-  - Pip: 23.x.x
-  - Operating System: Windows, Linux, or macOS.
+## Requirements
 
- 2. Installation
+- Python: `3.10.x`
+- Pip: `23.x.x`
+- OS: Windows, Linux, or macOS
 
-First, bring the project to your local machine and set up the environment:
+```bash
+conda create -n monkeydet python=3.10
+conda activate monkeydet        # or activate your virtualenv
+```
 
-1.  Clone the Repo:
-    git clone https://github.com/Durga0058/Monkey-Detection-RTSP.git
-    cd Monkey-Detection-RTSP
-2.  Install Dependencies:
-    pip install -r requirements.txt
+## Installation
 
- 3. Data Collection & Preprocessing
+Clone the repo and install dependencies:
 
-Before the model can "see" monkeys, we must prepare the visual data. Follow
-these steps:
+```bash
+git clone https://github.com/Durga0058/Monkey-Detection-RTSP.git
+cd Monkey-Detection-RTSP
+pip install -r requirements.txt
+```
 
-A. Data Collection
+## Configuration
 
-  - Gather Images: Collect at least 200–500 images of monkeys. Ensure variety:
-    different species, lighting (day/night), and distances from the camera.
-  - Annotation: Use a tool like CVAT or Roboflow to draw boxes around the
-    monkeys.
-  - Format: Export your annotations in YOLO format (this creates one .txt file
-    for every .jpg image).
+Create `config.yaml` in the project root:
 
-B. Preprocessing
+```yaml
+video_sources:
+  active_mode: "FILE"              # "RTSP" or "FILE"
+  rtsp_url: ""                     # camera stream URL, used when active_mode is "RTSP"
+  offline_video_path: "input_videos/your_video.mp4"   # used when active_mode is "FILE"
 
-To make training faster and more accurate:
+models:
+  model_path: "runs/detect/train/weights/best.pt"     # trained model weights
+```
 
-1.  Resizing: All images should be resized to 640x640 pixels.
-2.  Splitting: Organize your data into two main groups:
-      - Train (80%): Used to teach the model.
-      - Val (20%): Used to test the model's accuracy during training.
-3.  Folder Mapping: Ensure your files are placed in the data/ directory as shown
-    in the Directory Structure section below.
+- Set `active_mode: "RTSP"` and fill `rtsp_url` for live camera monitoring.
+- Set `active_mode: "FILE"` and fill `offline_video_path` to test on a local video.
 
- 4. The Dataset Configuration (custom_dataset.yaml)
+## Data Collection & Preprocessing
 
-If you cannot find the data/custom_dataset.yaml file, you need to create it
-manually inside the data/ folder. This file acts as a map for the computer to
-find your images.
+Before training, prepare the visual dataset:
 
-Create a file named custom_dataset.yaml and paste this inside:
+**A. Data Collection**
+- Gather at least 200–500 images of monkeys, with variety in species, lighting (day/night), and distance from camera.
+- Annotate using [CVAT](https://www.cvat.ai/) or [Roboflow](https://roboflow.com/), drawing boxes around each monkey.
+- Export annotations in YOLO format (one `.txt` label file per `.jpg` image).
 
-path: ./data          # The root directory of your data
-train: images/train   # Location of training images
-val: images/val       # Location of validation images
+**B. Preprocessing**
+1. Resize all images to `640x640` pixels.
+2. Split data into `train` (80%) and `val` (20%) sets.
+3. Place files in the `data/` directory as shown in Directory Structure below.
 
-nc: 1                 # Number of classes (just 1 for monkey)
-names: ['monkey']     # The name of the class
+## Dataset Configuration (`data/custom_dataset.yaml`)
 
-5. Training the Model
+If `data/custom_dataset.yaml` doesn't exist, create it manually:
 
-Once your data and .yaml file are ready, start the training process with this
-command:
+```yaml
+path: ./data
+train: images/train
+val: images/val
+nc: 1
+names: ['monkey']
+```
 
+## Training
+
+Once data and the `.yaml` config are ready:
+
+```bash
 python train.py --data data/custom_dataset.yaml --weights yolov8n.pt --epochs 100 --img 640
+```
 
-  - --weights yolov8n.pt: Starts with a pre-trained "Nano" model (fastest).
-  - --epochs 100: The model will look at the dataset 100 times to learn.
+- `--weights yolov8n.pt` — starts from a pretrained "Nano" model (fastest to train).
+- `--epochs 100` — number of passes over the dataset.
 
- 6. Finding your Best Model Checkpoint
+Trained weights are saved to `runs/detect/train/weights/`. Use **`best.pt`** — the checkpoint with highest validation accuracy.
 
-After training finishes, the system automatically creates a folder named runs/.
-This is where your results live.
+## Running Inference
 
-Where to find the weights? Navigate to: runs/detect/train/weights/
+Run detection on a local video or RTSP stream (as set in `config.yaml`):
 
-You will see files:
-
-1.  best.pt: USE THIS ONE. It is the version of the model that had the highest
-    accuracy during the training process.
-
-7. Running Inference
-
-To test your "best" model on a local video file, run:
-
-python monkey_detection.py "input_videos/your_video.mp4"
-
- Directory Structure
-
-Your folders should look exactly like this for the scripts to work:
-
-.
-├── data/
-│   ├── custom_dataset.yaml   <-- You create this
-│   ├── images/
-│   │   ├── train/            <-- Training .jpg files
-│   │   └── val/              <-- Validation .jpg files
-│   └── labels/
-│       ├── train/            <-- Training .txt files
-│       └── val/              <-- Validation .txt files
-├── input_videos/
-├── runs/
-│   └── detect/
-│       └── train/
-│           └── weights/
-│               └── best.pt   <-- Your final trained model
-├── train.py
-├── monkey_detection.py
-└── requirements.txt
-
-Note: This pipeline is optimized for RTSP streaming. Ensure your camera URL is
-correctly configured in monkey_detection.py for live monitoring.
+```bash
+python monkey_detection.py
+```
 
